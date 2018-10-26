@@ -1,1 +1,1 @@
-lojareactrest
+Loja
