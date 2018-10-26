@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import CssBaseline from "@material-ui/core/CssBaseline/CssBaseline";
 import Paper from "@material-ui/core/Paper/Paper";
@@ -15,8 +15,12 @@ import Button from "@material-ui/core/Button/Button";
 import Arrowback from "@material-ui/icons/ArrowBack";
 import axios from 'axios';
 import {NavLink} from "react-router-dom";
+import Tema from "./Tema";
+import {MuiThemeProvider} from '@material-ui/core';
 
-const styles = theme => ({
+
+const theme = Tema;
+const styles = {
     layout: {
         width: 'auto',
         display: 'block', // Fix IE11 issue.
@@ -45,8 +49,10 @@ const styles = theme => ({
     },
     submit: {
         marginTop: theme.spacing.unit * 3,
+        color: theme.palette.secondary.main,
     },
-});
+};
+
 
 class login extends React.Component {
     state = {
@@ -59,81 +65,94 @@ class login extends React.Component {
 
     handleSubmit = event => {
         event.preventDefault();
+        function isEmpty(arg) {
+            for (var item in arg) {
+                return false;
+            }
+            return true;
+        }
+
 
         axios.get('http://localhost:61353/api/Clientes/GetCliente/'+this.state.usuario,
             { id: this.state.id, usuario: this.state.usuario, senha: this.state.senha},)
             .then(res => {
                 try{
-                    if(this.state.senha === res.data[0].senha){
-                        this.props.history.push('/');
-                        localStorage.setItem('user',this.state.usuario);
-                        localStorage.setItem('id',res.data[0].Id);
+                    if(isEmpty(res.data)){
+                        alert("Usuario não cadastrado");
                     }
                     else{
-                        alert("senha incorreta");
+                        if(this.state.senha === res.data[0].senha){
+                            this.props.history.push('/');
+                            localStorage.setItem('user',this.state.usuario);
+                            localStorage.setItem('id',res.data[0].Id);
+                        }
+                        else{
+                            alert("senha incorreta");
+                        }
                     }
+
                 }
                 catch (e) {
+                    alert(res.data.toString());
                 }
                 
             })
-    }
+    };
 
 
     render() {
         const { classes } = this.props;
         return (
-            <React.Fragment>
-                <CssBaseline />
-                <main className={classes.layout}>
-                    <Paper className={classes.paper}>
-
-                        <Avatar className={classes.avatar}>
-                            <LockIcon color={"secundary"} />
-                        </Avatar>
-                        <Typography variant="headline">Sign in</Typography>
-                        <form className={classes.form}
-                              action={this.props.action}
-                              method={this.props.method}
-                              onSubmit={this.handleSubmit}>
-                            <FormControl margin="normal" required fullWidth>
-                                <InputLabel htmlFor="email">Email Address</InputLabel>
-                                <Input id="email" name="email" autoComplete="email" autoFocus onChange={this.handleUserIDChange} />
-                            </FormControl>
-                            <FormControl margin="normal" required fullWidth>
-                                <InputLabel htmlFor="password">Password</InputLabel>
-                                <Input
-                                    name="password"
-                                    type="password"
-                                    id="password"
-                                    autoComplete="current-password"
-                                    onChange={this.handleFullNameChange}
-                                />
-                            </FormControl>
-                            <FormControlLabel
-                                control={<Checkbox value="remember" color="primary" />}
-                                label="Remember me"
-                            />
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="raised"
-                                color="primary"
-                                className={classes.submit}
-                            >
-                                Sign in
-                            </Button>
-                        </form>
-                        <NavLink to={"/"}>
-                            <Avatar className={classes.avatar}>
-                                <Arrowback/>
+            <MuiThemeProvider theme={theme}>
+                <React.Fragment>
+                    <CssBaseline />
+                    <main className={classes.layout}>
+                        <Paper className={classes.paper} >
+                            <Avatar className={classes.avatar} >
+                                <LockIcon color={"secondary"} />
                             </Avatar>
-                        </NavLink>
-                    </Paper>
+                            <Typography variant="headline" color={"secondary"}>Logar</Typography>
+                            <form className={classes.form}
+                                  action={this.props.action}
+                                  method={this.props.method}
+                                  onSubmit={this.handleSubmit}>
+                                <FormControl margin="normal" required fullWidth>
+                                    <InputLabel htmlFor="email">Usuario</InputLabel>
+                                    <Input id="email" name="email" autoComplete="email" autoFocus onChange={this.handleUserIDChange} />
+                                </FormControl>
+                                <FormControl margin="normal" required fullWidth>
+                                    <InputLabel htmlFor="password">Senha</InputLabel>
+                                    <Input
+                                        name="password"
+                                        type="password"
+                                        id="password"
+                                        autoComplete="current-password"
+                                        onChange={this.handleFullNameChange}
+                                    />
+                                </FormControl>
+                                <FormControlLabel
+                                    control={<Checkbox value="remember" color="primary" />}
+                                    label="Lembrar-me"
+                                />
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="raised"
+                                    className={classes.submit}
+                                >
+                                    Logar
+                                </Button>
+                            </form>
+                            <NavLink to={"/"}>
+                                <Avatar className={classes.avatar}>
+                                    <Arrowback color={"secondary"}/>
+                                </Avatar>
+                            </NavLink>
+                        </Paper>
+                    </main>
+                </React.Fragment>
+            </MuiThemeProvider>
 
-
-                </main>
-            </React.Fragment>
         );
     }
 }

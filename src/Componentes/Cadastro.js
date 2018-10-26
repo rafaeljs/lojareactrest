@@ -13,9 +13,11 @@ import Button from "@material-ui/core/Button/Button";
 import axios from 'axios';
 import Arrowback from "@material-ui/icons/ArrowBack";
 import {NavLink} from "react-router-dom";
+import Tema from "./Tema";
+import {MuiThemeProvider} from '@material-ui/core';
 
-
-const styles = theme => ({
+const theme = Tema;
+const styles = {
     layout: {
         width: 'auto',
         display: 'block', // Fix IE11 issue.
@@ -44,8 +46,9 @@ const styles = theme => ({
     },
     submit: {
         marginTop: theme.spacing.unit * 3,
+        color: theme.palette.secondary.main,
     },
-});
+};
 
 class login extends React.Component {
     state = {
@@ -71,50 +74,51 @@ class login extends React.Component {
     render() {
         const { classes } = this.props;
         return (
-            <React.Fragment>
-                <CssBaseline />
-                <main className={classes.layout}>
-                    <Paper className={classes.paper}>
-                        <Avatar className={classes.avatar}>
-                            <LockIcon  />
-                        </Avatar>
-                        <Typography variant="headline">Cadastrar</Typography>
-                        <form className={classes.form}
-                              action={this.props.action}
-                              method={this.props.method}
-                              onSubmit={this.handleSubmit}>
-                            <FormControl margin="normal" required fullWidth>
-                                <InputLabel htmlFor="email">Email</InputLabel>
-                                <Input id="email" name="email" autoComplete="email" autoFocus onChange={this.handleUserIDChange} />
-                            </FormControl>
-                            <FormControl margin="normal" required fullWidth>
-                                <InputLabel htmlFor="password">Senha</InputLabel>
-                                <Input
-                                    name="password"
-                                    type="password"
-                                    id="password"
-                                    autoComplete="current-password"
-                                    onChange={this.handleFullNameChange}
-                                />
-                            </FormControl>
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="raised"
-                                color="primary"
-                                className={classes.submit}
-                            >
-                                Realizar cadastro
-                            </Button>
-                        </form>
-                        <NavLink to={"/"}>
-                        <Avatar className={classes.avatar}>
-                            <Arrowback/>
-                        </Avatar>
-                        </NavLink>
-                    </Paper>
-                </main>
-            </React.Fragment>
+            <MuiThemeProvider theme={theme}>
+                <React.Fragment>
+                    <CssBaseline />
+                    <main className={classes.layout}>
+                        <Paper className={classes.paper}>
+                            <Avatar className={classes.avatar}>
+                                <LockIcon color={"secondary"} />
+                            </Avatar>
+                            <Typography variant="headline" color={"secondary"}>Cadastrar</Typography>
+                            <form className={classes.form}
+                                  action={this.props.action}
+                                  method={this.props.method}
+                                  onSubmit={this.handleSubmit}>
+                                <FormControl margin="normal" required fullWidth>
+                                    <InputLabel htmlFor="email">Email</InputLabel>
+                                    <Input id="email" name="email" autoComplete="email" autoFocus onChange={this.handleUserIDChange} />
+                                </FormControl>
+                                <FormControl margin="normal" required fullWidth>
+                                    <InputLabel htmlFor="password">Senha</InputLabel>
+                                    <Input
+                                        name="password"
+                                        type="password"
+                                        id="password"
+                                        autoComplete="current-password"
+                                        onChange={this.handleFullNameChange}
+                                    />
+                                </FormControl>
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="raised"
+                                    className={classes.submit}
+                                >
+                                    Realizar cadastro
+                                </Button>
+                            </form>
+                            <NavLink to={"/"}>
+                            <Avatar className={classes.avatar}>
+                                <Arrowback color={"secondary"}/>
+                            </Avatar>
+                            </NavLink>
+                        </Paper>
+                    </main>
+                </React.Fragment>
+            </MuiThemeProvider>
         );
     }
 }

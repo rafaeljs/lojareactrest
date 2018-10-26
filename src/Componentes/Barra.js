@@ -1,26 +1,69 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import AccountCircle from '@material-ui/icons/AccountCircle';
+import Typography from '@material-ui/core/Typography';
+import InputBase from '@material-ui/core/InputBase';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import { NavLink } from 'react-router-dom';
+import { fade } from '@material-ui/core/styles/colorManipulator';
+import {MuiThemeProvider, withStyles} from '@material-ui/core/styles';
+import MenuIcon from '@material-ui/icons/Menu';
+import SearchIcon from '@material-ui/icons/Search';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import {NavLink} from "react-router-dom";
+import Tema from "./Tema";
 
+
+const theme = Tema;
 const styles = {
     root: {
-        flexGrow: 1,
+        width: '100%',
     },
     grow: {
         flexGrow: 1,
+        whiteSpace: 'nowrap',
     },
     menuButton: {
         marginLeft: -12,
         marginRight: 20,
+    },
+    title: {
+        overflow:'visible',
+    },
+    search: {
+        position: 'relative',
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: fade(theme.palette.primary.main, 0.15),
+        '&:hover': {
+            backgroundColor: fade(theme.palette.primary.main, 0.25),
+        },
+        marginRight: theme.spacing.unit * 2,
+        marginLeft: theme.spacing.unit * 2,
+        width: '100%',
+    },
+    searchIcon: {
+        width: theme.spacing.unit * 9,
+        height: '100%',
+        position: 'absolute',
+        pointerEvents: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    inputRoot: {
+        color: 'inherit',
+        width: '100%',
+    },
+    inputInput: {
+        paddingTop: theme.spacing.unit,
+        paddingRight: theme.spacing.unit,
+        paddingBottom: theme.spacing.unit,
+        paddingLeft: theme.spacing.unit * 10,
+        transition: theme.transitions.create('width'),
+        width: '100%',
+        color: theme.palette.secondary.main,
     },
     sublinhado: {
         textDecoration: 'none',
@@ -28,8 +71,7 @@ const styles = {
     },
 };
 
-class Barra extends React.Component {
-
+class PrimarySearchAppBar extends React.Component {
     state = {
         auth: true,
         anchorEl: null,
@@ -47,8 +89,10 @@ class Barra extends React.Component {
         this.setState({ anchorEl: null });
     };
     logout = () =>{
-        localStorage.clear();
+        localStorage.removeItem('user');
+        localStorage.removeItem('id');
     }
+
     render() {
         const { classes } = this.props;
         const { anchorEl } = this.state;
@@ -62,24 +106,37 @@ class Barra extends React.Component {
                 <NavLink to={"/cadastrar"} className={classes.sublinhado}><MenuItem>Cadastrar</MenuItem></NavLink></div>;
 
         }
-
         return (
             <div className={classes.root}>
-
-                <AppBar position="static">
-                    <Toolbar>
-                        <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
-                            <MenuIcon />
-                        </IconButton>
-                        <Typography variant="title" color="inherit" className={classes.grow}>
-                            Shop
-                        </Typography>
+                <MuiThemeProvider theme={theme}>
+                    <AppBar position="static">
+                        <Toolbar>
+                            <IconButton className={classes.menuButton} aria-label="Menu" color={"secondary"}>
+                                <MenuIcon />
+                            </IconButton>
+                            <Typography variant="title" className={classes.grow} color={"secondary"}>
+                                Silver Shop
+                            </Typography>
+                            <div className={classes.search}>
+                                <div className={classes.searchIcon}>
+                                    <SearchIcon  color={"secondary"}/>
+                                </div>
+                                <InputBase
+                                    placeholder="Search…"
+                                    classes={{
+                                        root: classes.inputRoot,
+                                        input: classes.inputInput,
+                                    }}
+                                    color={"secondary"}
+                                />
+                            </div>
+                            <div className={classes.grow} />
                             <div>
                                 <IconButton
                                     aria-owns={open ? 'menu-appbar' : null}
                                     aria-haspopup="true"
                                     onClick={this.handleMenu}
-                                    color="inherit"
+                                    color={"secondary"}
                                 >
                                     <AccountCircle />
                                 </IconButton>
@@ -95,21 +152,22 @@ class Barra extends React.Component {
                                         horizontal: 'right',
                                     }}
                                     open={open}
+
                                     onClose={this.handleClose}
                                 >
                                     {loginButton}
                                 </Menu>
                             </div>
-                    </Toolbar>
-                </AppBar>
-
+                        </Toolbar>
+                    </AppBar>
+                </MuiThemeProvider>
             </div>
         );
     }
 }
 
-Barra.propTypes = {
+PrimarySearchAppBar.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Barra);
+export default withStyles(styles)(PrimarySearchAppBar);
