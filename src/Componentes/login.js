@@ -13,10 +13,10 @@ import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabe
 import Checkbox from "@material-ui/core/Checkbox/Checkbox";
 import Button from "@material-ui/core/Button/Button";
 import Arrowback from "@material-ui/icons/ArrowBack";
-import axios from 'axios';
 import {NavLink} from "react-router-dom";
 import Tema from "./Tema";
 import {MuiThemeProvider} from '@material-ui/core';
+import firebase from '../firebase';
 
 
 const theme = Tema;
@@ -56,52 +56,31 @@ const styles = {
 
 class login extends React.Component {
     state = {
-        id: 0,
-        usuario: '',
-        senha:''
+        error:"",
     };
-    handleUserIDChange = event => {this.setState({ usuario: event.target.value })}
-    handleFullNameChange = event => {this.setState({ senha: event.target.value })}
+    handleEmail = event => {this.setState({ email: event.target.value })}
+    handlePassword = event => {this.setState({ senha: event.target.value })}
 
-    handleSubmit = event => {
+    handleSubmit = (event) => {
         event.preventDefault();
-        function isEmpty(arg) {
-            for (var item in arg) {
-                return false;
-            }
-            return true;
-        }
-
-
-        axios.get('http://localhost:61353/api/Clientes/GetCliente/'+this.state.usuario,
-            { id: this.state.id, usuario: this.state.usuario, senha: this.state.senha},)
-            .then(res => {
-                try{
-                    if(isEmpty(res.data)){
-                        alert("Usuario não cadastrado");
-                    }
-                    else{
-                        if(this.state.senha === res.data[0].senha){
-                            this.props.history.push('/');
-                            localStorage.setItem('user',this.state.usuario);
-                            localStorage.setItem('id',res.data[0].Id);
-                        }
-                        else{
-                            alert("senha incorreta");
-                        }
-                    }
-
-                }
-                catch (e) {
-                    alert(res.data.toString());
-                }
-                
+        const { email, senha } = this.state;
+        firebase
+            .auth
+            .signInWithEmailAndPassword(email, senha)
+            .then((user) => {
+                this.props.history.push('/dashboard');
             })
+            .catch((error) => {
+                this.setState({ error: error.message });
+            });
     };
 
 
     render() {
         const { classes } = this.props;
+
+
+
         return (
             <MuiThemeProvider theme={theme}>
                 <React.Fragment>
@@ -118,7 +97,7 @@ class login extends React.Component {
                                   onSubmit={this.handleSubmit}>
                                 <FormControl margin="normal" required fullWidth>
                                     <InputLabel htmlFor="email">Usuario</InputLabel>
-                                    <Input id="email" name="email" autoComplete="email" autoFocus onChange={this.handleUserIDChange} />
+                                    <Input id="email" name="email" autoComplete="email" autoFocus onChange={this.handleEmail} />
                                 </FormControl>
                                 <FormControl margin="normal" required fullWidth>
                                     <InputLabel htmlFor="password">Senha</InputLabel>
@@ -127,7 +106,7 @@ class login extends React.Component {
                                         type="password"
                                         id="password"
                                         autoComplete="current-password"
-                                        onChange={this.handleFullNameChange}
+                                        onChange={this.handlePassword}
                                     />
                                 </FormControl>
                                 <FormControlLabel
@@ -148,6 +127,7 @@ class login extends React.Component {
                                     <Arrowback color={"secondary"}/>
                                 </Avatar>
                             </NavLink>
+                            {this.state.error}
                         </Paper>
                     </main>
                 </React.Fragment>

@@ -14,6 +14,8 @@ import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import {NavLink} from "react-router-dom";
 import Tema from "./Tema";
+import firebase from '../firebase';
+
 
 
 const theme = Tema;
@@ -77,9 +79,6 @@ class PrimarySearchAppBar extends React.Component {
         anchorEl: null,
     };
 
-    handleChange = event => {
-        this.setState({ auth: event.target.checked });
-    };
 
     handleMenu = event => {
         this.setState({ anchorEl: event.currentTarget });
@@ -89,18 +88,17 @@ class PrimarySearchAppBar extends React.Component {
         this.setState({ anchorEl: null });
     };
     logout = () =>{
-        localStorage.removeItem('user');
-        localStorage.removeItem('id');
-    }
+        firebase.auth.signOut();
+    };
 
     render() {
-        const { classes } = this.props;
+        const { classes,autenticado } = this.props;
         const { anchorEl } = this.state;
         const open = Boolean(anchorEl);
 
         var loginButton;
-        if (localStorage.getItem('user') !== null) {
-            loginButton = <NavLink to={"/"} className={classes.sublinhado}  ><MenuItem onClick={this.logout.bind(this)}>Logout</MenuItem></NavLink>;
+        if (autenticado) {
+            loginButton = <NavLink to={"/"} className={classes.sublinhado} ><MenuItem onClick={this.logout.bind(this)}>Logout</MenuItem></NavLink>;
         } else {
             loginButton = <div><NavLink to={"/login"} className={classes.sublinhado}><MenuItem>Logar</MenuItem></NavLink>
                 <NavLink to={"/cadastrar"} className={classes.sublinhado}><MenuItem>Cadastrar</MenuItem></NavLink></div>;
